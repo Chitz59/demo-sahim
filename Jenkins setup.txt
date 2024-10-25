@@ -1,0 +1,52 @@
+Use this script to install Jenkins - filename.sh
+
+#!/bin/bash
+
+# Update system packages
+echo "Updating system packages..."
+sudo apt update -y
+
+# Install OpenJDK 17
+echo "Installing OpenJDK 17..."
+sudo apt install openjdk-17-jdk -y
+
+# Verify Java installation
+java -version
+
+# Add Jenkins repository and GPG key
+echo "Adding Jenkins repository and GPG key..."
+curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | sudo tee \
+  /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+
+# Update package list after adding Jenkins repository
+echo "Updating package list for Jenkins..."
+sudo apt update -y
+
+# Install Jenkins
+echo "Installing Jenkins..."
+sudo apt install jenkins -y
+
+# Start Jenkins service
+echo "Starting Jenkins service..."
+sudo systemctl start jenkins
+
+# Enable Jenkins to start at boot
+echo "Enabling Jenkins service to start at boot..."
+sudo systemctl enable jenkins
+
+# Allow Jenkins (port 8080) through firewall (ufw)
+echo "Allowing port 8080 through firewall..."
+sudo ufw allow 8080
+sudo ufw reload
+
+# Display Jenkins initial admin password
+echo "Fetching initial admin password for Jenkins..."
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+
+echo "Jenkins installed successfully! Access it at http://<your-ec2-public-ip>:8080"
+
+
+Then- chmod +x filename.sh and then ./filename.sh
